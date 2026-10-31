@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="ja" data-nicol="parallel">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>鳴らない双晶に、裏返しの声をあてる — Voicing the Inverted Twin</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23FAF8F4'/%3E%3Cpolygon points='16,27 5,15 8,7 14,6 16,17' fill='none' stroke='%23181818' stroke-width='1.8' stroke-linejoin='round'/%3E%3Cpolygon points='16,27 16,14 20,4 27,6 28,14' fill='none' stroke='%238F2519' stroke-width='1.8' stroke-linejoin='round'/%3E%3Cline x1='16' y1='3' x2='16' y2='29' stroke='%23181818' stroke-width='1.2' stroke-dasharray='2 2'/%3E%3C/svg%3E">
+<style>
+  /* ==========================================================================
+     Zero-Base Minimalism:
+     Pure untouched paper (#FAF8F4), single ink (#181818), mineral refraction,
+     zero boxes, zero sidebars, zero telemetry clutter.
+     ========================================================================== */
+  :root {
+    --bg: #FAF8F4;
+    --bg-elev: #F2EFE8;
+    --ink: #181818;
+    --sub: #545049;            /* Contrast 7.8:1 on #FAF8F4 (AAA) */
+    --accent: #8F2519;         /* Contrast 7.8:1 on #FAF8F4 (AAA) */
+    --jade: #064239;           /* Deep concentrated viridian: 11.0:1 on #FAF8F4 (AAA) */
+    --indigo: #0B2E4F;         /* Deep mineral Prussian-indigo: 13.3:1 on #FAF8F4 (AAA) */
+    --node-hover-bg: rgba(143, 37, 25, 0.08);
+    --node-cryst-hover-bg: rgba(6, 66, 57, 0.09);
+    --hairline: rgba(24, 24, 24, 0.12);
+    --hairline-strong: rgba(24, 24, 24, 0.28);
+    --biref-o: rgba(11, 46, 79, 0.34);
+    --biref-e: rgba(143, 37, 25, 0.38);
+    --focus: #8F2519;
+    --serif: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "HiraMinProN-W3", "MS PMincho", serif;
+    --sans: "Hiragino Kaku Gothic ProN", "Yu Gothic", "YuGothic", sans-serif;
+    --mono: ui-monospace, "SF Mono", "Menlo", monospace;
+  }
+
+  html[data-nicol="crossed"] {
+    --bg: #0E1012;
+    --bg-elev: #171A1E;
+    --ink: #EAE6DF;
+    --sub: #A9A398;            /* Contrast 7.6:1 on #0E1012 (AAA) */
+    --accent: #F09D80;         /* Contrast 8.8:1 on #0E1012 (AAA) */
+    --jade: #72F2D0;           /* Vivid crystal jade: 13.9:1 on #0E1012 (AAA) */
+    --indigo: #A8DCFA;         /* Vivid ice-quartz: 12.8:1 on #0E1012 (AAA) */
+    --node-hover-bg: rgba(240, 157, 128, 0.14);
+    --node-cryst-hover-bg: rgba(114, 242, 208, 0.14);
+    --hairline: rgba(234, 230, 223, 0.12);
+    --hairline-strong: rgba(234, 230, 223, 0.30);
+    --biref-o: rgba(168, 220, 250, 0.45);
+    --biref-e: rgba(240, 157, 128, 0.48);
+    --focus: #72F2D0;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    line-height: 2.22;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    transition: background-color 0.35s ease, color 0.35s ease;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body.colophon-open {
+    overflow: hidden;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 8px;
+    z-index: 200;
+    background: var(--ink);
+    color: var(--bg);
+    padding: 8px 14px;
+    font-family: var(--sans);
+    font-size: 12px;
+    text-decoration: none;
+  }
+  .skip-link:focus {
+    left: 12px;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus) !important;
+    outline-offset: 3px !important;
+  }
+
+  /* ==========================================================================
+     Whisper-Quiet Top Hairline Navigation (Fits 375px & 1440px in 1 Line)
+     ========================================================================== */
+  .top-whisper {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--bg);
+    border-bottom: 1px solid var(--hairline);
+    height: 44px;
+    padding: 0 max(16px, calc((100vw - 880px) / 2));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.35s ease;
+  }
+
+  .progress-thread {
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    height: 1px;
+    width: 0%;
+    background: var(--ink);
+    pointer-events: none;
+  }
+
+  .ch-numerals {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .num-btn,
+  .tool-btn {
+    appearance: none;
+    background: transparent;
+    border: none;
+    color: var(--sub);
+    font-family: var(--serif);
+    font-size: 13px;
+    min-width: 34px;
+    min-height: 38px;
+    padding: 0 7px;
+    cursor: pointer;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+  }
+
+  .tool-btn {
+    font-family: var(--sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    min-width: 36px;
+  }
+
+  .num-btn:hover,
+  .tool-btn:hover {
+    color: var(--ink);
+  }
+
+  .num-btn.current {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .num-btn.current::after,
+  .tool-btn[aria-pressed="true"]::after {
+    content: "";
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: 6px;
+    height: 1.5px;
+    background: var(--accent);
+  }
+  .tool-btn[aria-pressed="true"] {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .tool-group {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+  }
+
+  .mic-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 4px;
+    display: none;
+  }
+  .tool-btn.listening .mic-dot {
+    display: inline-block;
+  }
+
+  /* ==========================================================================
+     Frontispiece (扉 — Living 84°33' Hairline Twin & Title in Pure Air)
+     ========================================================================== */
+  .page-sheet {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 24px 132px;
+  }
+
+  .page-sheet.is-vertical {
+    max-width: 1040px;
+    padding-bottom: 48px;
+  }
+  .page-sheet.is-vertical .frontispiece {
+    padding: 24px 0 18px;
+  }
+  .page-sheet.is-vertical #twin-canvas {
+    width: 164px;
+    height: 104px;
+    margin-bottom: 10px;
+  }
+  .page-sheet.is-vertical h1.work-title {
+    font-size: clamp(19px, 2.1vw, 24px);
+  }
+  .page-sheet.is-vertical .quiet-invitation {
+    margin-top: 10px;
+  }
+  .page-sheet.is-vertical .suture-divider {
+    display: none;
+  }
+
+  .frontispiece {
+    padding: 64px 0 52px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #twin-canvas {
+    width: 220px;
+    height: 138px;
+    display: block;
+    cursor: ns-resize;
+    touch-action: none;
+    margin-bottom: 24px;
+  }
+
+  h1.work-title {
+    font-family: var(--serif);
+    font-size: clamp(22px, 2.7vw, 29px);
+    font-weight: 500;
+    line-height: 1.55;
+    letter-spacing: 0.11em;
+    color: var(--ink);
+  }
+  h1.work-title .title-phrase {
+    display: inline-block;
+  }
+
+  .en-caption {
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--sub);
+  }
+
+  .quiet-invitation {
+    margin-top: 22px;
+    font-family: var(--serif);
+    font-size: 12.5px;
+    line-height: 1.85;
+    letter-spacing: 0.08em;
+    color: var(--sub);
+    text-wrap: balance;
+  }
+  .quiet-invitation .inv-phrase {
+    display: inline-block;
+  }
+
+  .suture-divider {
+    width: 1px;
+    height: 36px;
+    border-left: 1px dashed var(--hairline-strong);
+    margin-top: 28px;
+  }
+
+  /* ==========================================================================
+     Pure Literary Column (Horizontal & Vertical Tankobon Modes)
+     ========================================================================== */
+  .manuscript-body {
+    max-width: 37.5em;
+    margin: 0 auto;
+  }
+
+  .manuscript-body.vertical-mode {
+    max-width: none;
+    width: 100%;
+    height: 60vh;
+    min-height: 430px;
+    max-height: 560px;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 20px 12px 24px;
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .chapter-section {
+    margin-bottom: 84px;
+  }
+  .manuscript-body.vertical-mode .chapter-section {
+    margin-bottom: 0;
+    margin-left: 68px;
+  }
+
+  h2.chapter-heading {
+    font-family: var(--serif);
+    font-size: 17.5px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    color: var(--sub);
+    margin: 28px 0 34px;
+    text-align: center;
+  }
+  .manuscript-body.vertical-mode h2.chapter-heading {
+    text-align: start;
+    margin: 0 28px 0 40px;
+    padding-top: 1.5em;
+  }
+
+  p.lit-p {
+    font-size: 16.5px;
+    letter-spacing: 0.045em;
+    margin-bottom: 0.5em;
+    color: var(--ink);
+    text-align: justify;
+  }
+  p.lit-p.scene-break {
+    margin-top: 2.2em;
+  }
+  .manuscript-body.vertical-mode p.lit-p {
+    margin-bottom: 0;
+    margin-left: 0.5em;
+  }
+  .manuscript-body.vertical-mode p.lit-p.scene-break {
+    margin-top: 0;
+    margin-right: 2.2em;
+  }
+  p.lit-p.end-mark {
+    text-align: right;
+    margin-top: 2.8em;
+    color: var(--sub);
+    letter-spacing: 0.16em;
+  }
+  .manuscript-body.vertical-mode p.lit-p.end-mark {
+    text-align: end;
+    margin-top: 0;
+    margin-right: 2.8em;
+  }
+
+  /* ==========================================================================
+     Optical Birefringence & High-Visibility Sound Nodes (濃色ボールド＋明瞭な下線)
+     ========================================================================== */
+  .twin-node {
+    display: inline;
+    cursor: pointer;
+    font-weight: 700;
+    padding-inline: 2px;
+    border-radius: 2px;
+    transition:
+      color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      text-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 0.2s ease;
+  }
+
+  .twin-node .twin-word {
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+    transition: text-decoration-color 0.25s ease;
+  }
+
+  .manuscript-body.vertical-mode .twin-node .twin-word {
+    text-underline-position: right;
+  }
+
+  body:not(.all-crystallized) .twin-node:not(.crystallized) {
+    color: var(--indigo);
+    text-shadow:
+      -0.95px -0.45px 0 var(--biref-o),
+       0.95px  0.45px 0 var(--biref-e);
+  }
+  body:not(.all-crystallized) .twin-node:not(.crystallized) .twin-word {
+    text-decoration-color: var(--accent);
+  }
+  body:not(.all-crystallized) .twin-node:not(.crystallized):hover {
+    background-color: var(--node-hover-bg);
+  }
+  body:not(.all-crystallized) .twin-node:not(.crystallized):hover .twin-word {
+    text-decoration-thickness: 2.5px;
+  }
+
+  .twin-node.crystallized,
+  body.all-crystallized .twin-node {
+    color: var(--jade);
+    text-shadow: none;
+  }
+  .twin-node.crystallized .twin-word,
+  body.all-crystallized .twin-node .twin-word {
+    text-decoration-color: var(--jade);
+  }
+  .twin-node.crystallized:hover,
+  body.all-crystallized .twin-node:hover {
+    background-color: var(--node-cryst-hover-bg);
+  }
+  .twin-node.crystallized:hover .twin-word,
+  body.all-crystallized .twin-node:hover .twin-word {
+    text-decoration-thickness: 2.5px;
+  }
+
+  .twin-node .pitch-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-inline-start: 2px;
+    display: none;
+    vertical-align: super;
+    line-height: 1;
+    letter-spacing: 0;
+    text-decoration: none;
+  }
+  .twin-node.crystallized .pitch-tag,
+  body.all-crystallized .twin-node .pitch-tag {
+    display: inline-block;
+  }
+  .manuscript-body.vertical-mode .twin-node .pitch-tag {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    vertical-align: baseline;
+  }
+
+  /* ==========================================================================
+     Ephemeral Whisper Line (Bottom Corner Borderless Marginalia)
+     ========================================================================== */
+  .whisper-footnote {
+    position: fixed;
+    left: 20px;
+    bottom: 14px;
+    z-index: 30;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--sub);
+    background: var(--bg);
+    padding: 2px 6px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .whisper-footnote.visible {
+    opacity: 1;
+  }
+
+  /* ==========================================================================
+     Minimal Colophon Sheet (『記』 — Borderless Typographic Overlay)
+     ========================================================================== */
+  .colophon-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: var(--bg);
+    overflow-y: auto;
+    display: none;
+    padding: 56px 24px 96px;
+  }
+  .colophon-overlay.open {
+    display: block;
+  }
+  .colophon-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    font-family: var(--serif);
+    font-size: 14.5px;
+    line-height: 2.0;
+  }
+  .colophon-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--hairline-strong);
+    margin-bottom: 32px;
+  }
+  .colophon-head h3 {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+  }
+  .close-link {
+    appearance: none;
+    background: transparent;
+    border: none;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 12.5px;
+    min-height: 36px;
+    padding: 0 8px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--ink);
+  }
+  .colophon-sec {
+    margin-bottom: 36px;
+  }
+  .colophon-sec h4 {
+    font-family: var(--sans);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .colophon-sec p {
+    color: var(--sub);
+    margin-bottom: 12px;
+    text-align: justify;
+  }
+
+  /* Minimal Phonetic Comparison List inside Colophon */
+  .phonetic-list {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-family: var(--serif);
+  }
+  .phonetic-list tr {
+    border-bottom: 1px solid var(--hairline);
+  }
+  .phonetic-list td {
+    padding: 10px 4px;
+    vertical-align: middle;
+  }
+  .ph-btns {
+    text-align: right;
+    white-space: nowrap;
+  }
+  .ph-btn {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--hairline-strong);
+    color: var(--sub);
+    padding: 5px 10px;
+    min-height: 34px;
+    font-family: var(--mono);
+    font-size: 11px;
+    cursor: pointer;
+    margin-left: 6px;
+  }
+  .ph-btn.narada {
+    color: var(--jade);
+    border-color: var(--jade);
+  }
+  .ph-btn:hover {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+
+  @media (max-width: 600px) {
+    .top-whisper {
+      padding: 0 8px;
+    }
+    .num-btn {
+      min-width: 34px;
+      padding: 0 5px;
+      font-size: 12.5px;
+    }
+    .tool-btn {
+      min-width: 35px;
+      padding: 0 5px;
+      font-size: 11.5px;
+    }
+    .page-sheet {
+      padding: 0 18px 96px;
+    }
+    .frontispiece {
+      padding: 36px 0 32px;
+    }
+    #twin-canvas {
+      width: 184px;
+      height: 116px;
+      margin-bottom: 16px;
+    }
+    .quiet-invitation {
+      font-size: 11.5px;
+      margin-top: 16px;
+    }
+    .suture-divider {
+      height: 24px;
+      margin-top: 18px;
+    }
+    h2.chapter-heading {
+      margin: 18px 0 24px;
+      font-size: 16.5px;
+    }
+    p.lit-p {
+      font-size: 15.8px;
+      line-height: 2.15;
+    }
+    .whisper-footnote {
+      left: 12px;
+      right: 12px;
+      bottom: 8px;
+      font-size: 10.5px;
+    }
+  }
+
+  @media print {
+    .top-whisper, .whisper-footnote, .colophon-overlay, .quiet-invitation {
+      display: none !important;
+    }
+    body, html {
+      background: #fff !important;
+      color: #000 !important;
+    }
+    .twin-node {
+      text-shadow: none !important;
+      border: none !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<a href="#manuscript-start" class="skip-link">本文へスキップ</a>
+
+<header class="top-whisper">
+  <nav class="ch-numerals" id="chapter-tabs" aria-label="章移動"></nav>
+
+  <div class="tool-group" role="toolbar" aria-label="表示と音響の切替">
+    <button id="btn-mic" class="tool-btn" type="button" aria-pressed="false" aria-label="声をあてる（マイク上げ核検出）" title="声をあてる（低い声から高く跳ね上げると結晶化）"><span class="mic-dot" aria-hidden="true"></span>声</button>
+    <button id="btn-crystallize-all" class="tool-btn" type="button" aria-pressed="false" aria-label="全双晶を結晶化（通読モード）" title="すべての複屈折語を単一焦点へ結晶化">澄</button>
+    <button id="btn-writing-mode" class="tool-btn" type="button" aria-pressed="false" aria-label="縦組み／横組み切替" title="縦組み／横組み切替">縦</button>
+    <button id="btn-nicol" class="tool-btn" type="button" aria-pressed="false" aria-label="暗視野（直交ニコル）／明視野切替" title="暗視野（直交ニコル）／明視野切替">暗</button>
+    <button id="btn-statement" class="tool-btn" type="button" aria-haspopup="dialog" aria-label="作品解説・音韻標本・展示構想" title="作品解説・音韻標本">記</button>
+  </div>
+
+  <div class="progress-thread" id="progress-thread"></div>
+</header>
+
+<main class="page-sheet" id="page-sheet">
+  <section class="frontispiece" aria-label="作品扉">
+    <canvas id="twin-canvas" width="220" height="138" tabindex="0" role="application"
+      aria-label="日本式双晶（接合角84度33分）。上へ撫でるか上矢印キーで奈良田の上げ核倍音が鳴り複屈折が結晶化します。下へ撫でるか下矢印キーでは逆位相で相殺します。"></canvas>
+
+    <h1 class="work-title" id="doc-title"></h1>
+    <div class="en-caption">Voicing the Inverted Twin</div>
+    <p class="quiet-invitation"><span class="inv-phrase">二重に滲む語に触れるか、</span><span class="inv-phrase">双晶を上へ撫でると単一焦点へ結ばれる</span></p>
+    <div class="suture-divider" aria-hidden="true"></div>
+  </section>
+
+  <article id="manuscript-start">
+    <div class="manuscript-body" id="manuscript-body"></div>
+  </article>
+</main>
+
+<div class="whisper-footnote" id="whisper-footnote" aria-live="polite"></div>
+
+<!-- Minimal Borderless Colophon Sheet (『記』) -->
+<div class="colophon-overlay" id="statement-modal" role="dialog" aria-modal="true" aria-labelledby="colophon-title">
+  <div class="colophon-inner">
+    <div class="colophon-head">
+      <h3 id="colophon-title">記　電気双晶と奈良田の上げ核</h3>
+      <button type="button" class="close-link" id="btn-modal-close">本文へ戻る（Esc）</button>
+    </div>
+
+    <section class="colophon-sec">
+      <h4>一、三二、七六八ヘルツの沈黙</h4>
+      <p>いまこの画面の時間を刻んでいる水晶振動子（32,768Hz）は、昭和初期の山梨における水晶研磨技術から生まれた。だが天然水晶の内部で右水晶と左水晶が鏡像に接合した「電気双晶（日本式双晶 84°33′）」は、均質な電圧をかけると左右の歪みが打ち消し合って鳴らないため、工業規格から弾かれた。</p>
+      <p>同じ昭和三十年代、ダムの湖底に沈んだ山梨県早川町・奈良田には、周辺の東京式アクセント（音の下がり目 ┐）とは高低が鏡像に裏返った「上げ核（音の上がり目 ┌）」と、室町以前の「四つ仮名（水＝みづ［midu］／見ず＝みず［mizu］）」が残されていた。本作では、標準クロック上で複屈折して滲む言葉に、非対称の上向き応力や裏返しの声をあてることで単一焦点の結晶倍音が立ち上がる。</p>
+    </section>
+
+    <section class="colophon-sec">
+      <h4>二、音韻対照標本（拍数完全一致・水晶倍音試聴）</h4>
+      <table class="phonetic-list" aria-label="甲府盆地と奈良田の音韻対照">
+        <tbody>
+          <tr>
+            <td>あ┌め（雨・2拍）</td>
+            <td class="ph-btns">
+              <button type="button" class="ph-btn" onclick="playModalTone('ame_2','tokyo')">盆地 ア┐メ（2拍）</button>
+              <button type="button" class="ph-btn narada" onclick="playModalTone('ame_2','narada')">奈良田 ア┌メ（2拍）</button>
+            </td>
+          </tr>
+          <tr>
+            <td>はな（鼻・無核2拍）</td>
+            <td class="ph-btns">
+              <button type="button" class="ph-btn" onclick="playModalTone('hana_2','tokyo')">盆地 ハ┌ナ（2拍）</button>
+              <button type="button" class="ph-btn narada" onclick="playModalTone('hana_2','narada')">奈良田［ハ］ナ（2拍）</button>
+            </td>
+          </tr>
+          <tr>
+            <td>みづ／みず（四つ仮名・2拍）</td>
+            <td class="ph-btns">
+              <button type="button" class="ph-btn" onclick="playModalTone('mizu_2','tokyo')">見ず [mizu]（2拍）</button>
+              <button type="button" class="ph-btn narada" onclick="playModalTone('midu_2','narada')">水 [midu]（2拍）</button>
+            </td>
+          </tr>
+          <tr>
+            <td>いし┌・が（石＋助詞・3拍）</td>
+            <td class="ph-btns">
+              <button type="button" class="ph-btn" onclick="playModalTone('ishi_ga','tokyo')">盆地 イシ┐ガ（3拍）</button>
+              <button type="button" class="ph-btn narada" onclick="playModalTone('ishi_ga','narada')">奈良田 イシ┌ガ（3拍）</button>
+            </td>
+          </tr>
+          <tr>
+            <td>ありが┌たし（古語礼・5拍）</td>
+            <td class="ph-btns">
+              <button type="button" class="ph-btn" onclick="playModalTone('arigatashi_5','tokyo')">標準 リ┐ガ（5拍）</button>
+              <button type="button" class="ph-btn narada" onclick="playModalTone('arigatashi_5','narada')">奈良田 ガ┌タ（5拍）</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="colophon-sec">
+      <h4>三、現地展示構想（甲府「小さな蔵の美術館」／北杜「GASBON METABOLISM」）</h4>
+      <p>空間内に一枚の白い和紙と、山梨産天然双晶の薄片（ピエゾ圧電素子装着）だけを置く。鑑賞者が石の片翼へ上げ核の声を吹きかけた瞬間、石が生じる微弱な圧電信号によって、和紙に投影された複屈折テキストが単一焦点へ結晶し、静かな倍音が蔵の暗室に響くミニマル・インスタレーションとして展開する。</p>
+    </section>
+  </div>
+</div>
+
+<script>
+const WORK_DATA = {"title": "鳴らない双晶に、裏返しの声をあてる", "chapters": [{"heading": "第一章　鳴らない石", "blocks": [{"type": "narrative", "text": "　祖父が死んでひと月が過ぎても、裏庭の作業場には水に濡れた石英の匂いが残っていた。", "sceneBreak": false}, {"type": "narrative", "text": "　北向きの高窓から落ちる十月の白い光が、ベルトの外れた研磨機と、流し台の底に乾いて固まった砥石の泥を青白く照らしている。指の腹でその白い粉をこすると、金属の匂いの抜けた、冷たい硝子の粉に似た乾いた音がした。母からは、業者が引き取りに来る週末までに、祖父が棚に押し込んでいた私物と売り物になる原石だけを分けておくように言われていた。", "sceneBreak": false}, {"type": "narrative", "text": "　僕は吹奏楽部の朝練で使い慣れたクロスをポケットから出し、棚の上段に並んだ木箱の埃を端から拭っていった。甲府の古い職人だった祖父は、晩年こそ観光客向けの勾玉や指輪の石を磨いていたが、若い頃は通信機に入れる水晶の薄い板を切り出す仕事をしていたらしい。作業台の引き出しには、今でも切手より小さな四角い水晶の薄片が、薬包紙に包まれていくつも転がっていた。ピンセットでつまんで光にかざすと、どれも定規で引いたように角が揃っていて、息を吹きかければそのまま澄んだ音で鳴り出しそうなほど均質だった。", "sceneBreak": false}, {"type": "narrative", "text": "　問題の木箱は、そうした引き出しの奥を離れ、流し台の下の湿気を避けるようにブリキ缶へ二重に収められていた。", "sceneBreak": false}, {"type": "narrative", "text": "　桐の蓋を外すと、黄ばんだ真綿のうえに、形の歪んだ天然水晶がひとつと、雲母のように薄く削り出された半透明の板が三十枚ほど並んでいた。真ん中に置かれた原石は、僕が知っている六角柱の水晶とはまるで違っていた。透明な二本の結晶が、ちょうど鳥の羽根か矢筈のように斜めの角度で食い込み、ひとつの根元を分け合って貼りついている。光を受けると、接合面の奥に虹色の薄い膜のような影が浮かび、右の柱に入った光が左の柱へ抜ける途中でふっと折れ曲がって見えた。", "sceneBreak": false}, {"type": "narrative", "text": "　その周りに並べられた薄い板も、よく見ると真ん中にうっすらと白い継ぎ目のような筋が走っている。僕は真綿の端から一枚だけ指先でつまみ上げ、高窓の白い光へ透かしてみた。", "sceneBreak": false}, {"type": "narrative", "text": "　板の隅に、文字があった。", "sceneBreak": false}, {"type": "narrative", "text": "　ルーペを当ててようやく読めるほどの大きさで、縫い針か鏨の鋭い先端で引っ掻いたらしい平仮名が二文字、「あめ」と彫られている。隣の板を持ち上げると「いし」とあり、その次には「はな」、さらに奥の一枚には「みづ」と刻まれていた。現代の仮名遣いなら「みず」と書くはずのところが、わざわざ「づ」になっている。しかも奇妙なことに、どの板の平仮名にも、一文字目か二文字目のすぐ右肩に、小さな鉤のような引っ掻き傷がひとつだけ添えられていた。研磨の途中でついた傷にしては、どれも同じ深さで、迷いのない角度で刻まれている。", "sceneBreak": false}, {"type": "narrative", "text": "　僕は親指と人差し指で「みづ」の板を軽く挟み、耳もとで爪の先を当てて弾いてみた。引き出しにあった四角い工業用の薄片なら、チリ、と硬い硝子の余韻を残すのに、その板は指の腹に鈍く吸い込まれるような感触を返しただけで、音らしい音を立てなかった。部室でクラリネットのリードが湿りすぎたときよりもまだ重く、爪の先に乾いた石の冷たさだけが残った。", "sceneBreak": false}, {"type": "narrative", "text": "　引き戸の敷居が軋んで、午後の日差しを背負った小さな影が土間に落ちたのは、僕が五枚目の薄片をルーペで覗き込んでいたときだった。", "sceneBreak": true}, {"type": "dialogue", "text": "「まだ捨てずに持っとったか、勝造のやつ」", "sceneBreak": false}, {"type": "narrative", "text": "　振り返ると、紺色の古いリュックサックを片方の肩にかけた大叔母のぬい婆さんが、土間の真ん中に立っていた。三年前に亡くなった祖母の妹で、南アルプスの奥にある早川町の奈良田という集落にひとりで暮らしている。八十をとっくに越えているはずなのに、腰は曲がっておらず、乾いた山葡萄の蔓みたいに細くて硬い首筋をしていた。", "sceneBreak": false}, {"type": "dialogue", "text": "「おばあちゃんの妹さんだよね。お母さんなら母屋でお茶の支度をしてるけど」", "sceneBreak": false}, {"type": "dialogue", "text": "「茶なんざ後でいい。その箱を見に来たんだから」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいは靴の踵を鳴らしてコンクリートの土間へ入ってくると、僕が座っていた丸椅子の隣へ遠慮なくビールケースを引き寄せて腰を下ろした。そして節の太い指を伸ばし、真綿のうえから迷いなく双子の原石をつまみ上げた。", "sceneBreak": false}, {"type": "dialogue", "text": "「やっぱり双晶だ。乙女鉱山のほうで昔よく出た、ふたごの石だよ。見た目はハートみたいで綺麗だけんど、無線機の石屋にとっては一番の厄介もんだった」", "sceneBreak": false}, {"type": "dialogue", "text": "「厄介もんって、不良品なの」", "sceneBreak": false}, {"type": "dialogue", "text": "「鳴らんからな」とぬいは短く言った。「右と左が裏返しにくっついとる石は、電気を流しても中で喧嘩して震えんのだそうだ。勝造は若い頃、工場ではねられたその鳴らん石ばっかりポケットに入れて持ち帰っとった」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいは原石を真綿へ戻すと、僕が手に持っていた薄い板を横から覗き込んだ。老眼鏡もかけずに高窓の光へ板を傾け、細めた目の奥で微かに唇を動かす。", "sceneBreak": false}, {"type": "dialogue", "text": "「なんて彫ってあるか読めるか、澄」", "sceneBreak": false}, {"type": "dialogue", "text": "「読めるよ。これなんか、あめ、でしょ」", "sceneBreak": false}, {"type": "narrative", "text": "　僕は普段どおり、最初の「あ」を高く出し、「め」へ向かって声を落とす甲府の言い方で読んだ。学校でも家でも、誰もが空から降る雨のことをそう呼んでいる。", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいは鼻の先で短く息を吐き、首を横に振った。", "sceneBreak": false}, {"type": "dialogue", "text": "「それじゃあ盆地の人間が舐める飴玉だ。そこに彫ってあるのは、そんな上から落ちてくる声じゃねえ」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいは薄い板を自分の唇のすぐ前に掲げると、乾いた喉を少しだけ開いた。", "sceneBreak": false}, {"type": "dialogue", "text": "「あめが」", "sceneBreak": false}, {"type": "narrative", "text": "　最初に置かれた「あ」は、井戸の底の小石みたいに低く平らだった。ところが次の「め」へ移った瞬間、ぬいの声は不意に白い鳥が崖の縁を蹴ったように高く跳ね上がり、そのまま「が」でふっと谷の空気へ溶けた。", "sceneBreak": false}, {"type": "narrative", "text": "　僕は思わずぬいの口もとを見つめた。吹奏楽部で隣のパートが半音だけ高い管を吹いたときのように、自分の耳の奥にある基準の目盛りがぐらりと揺れた。ぬいは構わず次の板を指で示し、同じように声を出す。", "sceneBreak": false}, {"type": "dialogue", "text": "「いしが。はなが」", "sceneBreak": false}, {"type": "dialogue", "text": "　「いしが」では真ん中でいったん沈んだ声が最後の「が」で跳ね上がり、「はなが」では最初の「は」だけが澄んで高かった。僕が知っている日本語の高低と、ちょうど鏡に映したみたいに山と谷の位置が入れ替わっている。よその土地の訛りを聴いたときの物珍しさとはまるで感触が違った。言葉の背骨そのものが逆向きに反り返っていて、聴いていると自分の立っている地面の傾斜まで少しずつ変わっていくような不思議な浮遊感があった。", "sceneBreak": false}, {"type": "dialogue", "text": "「奈良田の声だよ」とぬいは板を真綿のうえに置き直した。「姉ちゃんのさきが、この甲府の盆地へ嫁に来るまで毎日喋っとった声だ」", "sceneBreak": false}, {"type": "narrative", "text": "　僕は仏壇の写真のなかにいる祖母の顔を思い浮かべた。僕の記憶にある祖母は、いつも台所の隅で唇を固く結び、必要なことだけを平らな短い言葉でぽつりと告げる人だった。あんなふうに鳥が跳ねるような抑揚で祖母が喋ったところなど、一度も聴いたことがない。", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいは桐の蓋を両手で持ち上げると、真綿ごと薄片を閉じ込めるようにぱたんと閉めた。", "sceneBreak": false}, {"type": "dialogue", "text": "「今年はこの秋口まで雨が少なかったせいで、奈良田のダムの水がいちばん引いとる。沈んだ昔の畑の石垣が、白く顔を出した」", "sceneBreak": false}, {"type": "dialogue", "text": "「ダムって、早川の奥の」", "sceneBreak": false}, {"type": "dialogue", "text": "「西山ダムだよ。姉ちゃんがこっちへ嫁に来た年に、谷の底をぜんぶ呑み込んだ水だ」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいはブリキ缶の蓋までしっかり押し込むと、風呂敷を広げてその缶を素早く包み、結び目をきゅっと引き締めた。それから僕の顔をまっすぐ見上げて言った。", "sceneBreak": false}, {"type": "dialogue", "text": "「勝造が死んだんなら、この鳴らん石をいつまでも盆地の埃のなかに置いとく義理はない。明日の一番のバスで奈良田へ持って帰って、水の底へ返してやる。澄、あんた学校は休みだね。荷物持ちでついてきな」", "sceneBreak": false}, {"type": "narrative", "text": "　断る隙間を最初から残さない言い方だった。風呂敷包みのなかで、真綿に挟まれた薄い水晶の板がかすかに擦れ合った気がしたが、やっぱり音は聞こえなかった。", "sceneBreak": false}]}, {"heading": "第二章　盆地の平らな口", "blocks": [{"type": "narrative", "text": "　その晩、母屋の客間に布団を敷いてもらったぬいは、夕飯の片づけが終わると自分のリュックサックから新聞紙に包んだ赤い小豆を出してきて、台所の流しに立った。明日、奈良田へ帰ったら仏前に供えるぼた餅を炊くのだと言い、母が手伝おうとしても「あんたの洗い方だと皮が剥ける」と追い払ってしまった。", "sceneBreak": false}, {"type": "narrative", "text": "　僕は宿題のノートを食卓に広げたふりをして、蛇口から落ちる水音と、ざるの中で小豆が転がる乾いたような湿ったような音に耳を澄ませていた。", "sceneBreak": false}, {"type": "dialogue", "text": "「甲府のみづは、秋になってもまだぬるいな」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいが誰に言うともなく呟いたとき、僕の鉛筆がノートの途中で止まった。昼間に作業場の薄片で見た「みづ」という古い綴りが、そのままぬいの口から音になって転がり出たように聞こえたからだ。", "sceneBreak": false}, {"type": "narrative", "text": "　僕は椅子から立ち上がり、流しの脇にある冷蔵庫から麦茶を取り出すふりをしてぬいの手もとを覗き込んだ。ぬいは赤い粒のあいだに指を入れ、白く濁った水をざるの網目から落としている。", "sceneBreak": false}, {"type": "dialogue", "text": "「ねえ、ぬいおばあちゃん。いま、水のこと、みづって言った？」", "sceneBreak": false}, {"type": "dialogue", "text": "「みづをみづと言って何が悪い」", "sceneBreak": false}, {"type": "dialogue", "text": "「僕らが言う『みず』と、なんか最初の音が違う気がして」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいは蛇口をひねって水を細くすると、濡れた指先で自分の前歯の裏あたりを軽く叩いてみせた。", "sceneBreak": false}, {"type": "dialogue", "text": "「盆地のもんは怠けとるからな。見ず知らずの『みず』も、沢から汲む『みづ』も、この『あづき』も、ぜんぶ前歯の隙間からスウスウ息を漏らして同じ音で済ませてしまう。奈良田の年寄りはそんな平らな口はせんよ」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいはもう一度、ゆっくりと二つの言葉を並べて発音してみせた。", "sceneBreak": false}, {"type": "dialogue", "text": "「顔も見ず、のみず。沢のみづ、のみづ。ほれ、違うら」", "sceneBreak": false}, {"type": "narrative", "text": "　今度ははっきりと分かった。最初の「見ず」では、舌の先がどこにも触れず、歯の裏を冷たい風が擦り抜けるような音がする。けれど次の「水」では、ぬいの舌先がいったん上の歯茎をぴたりと塞ぎ、小さな堰を切るみたいに「づ」と水を弾いて離れる。小豆を「あづき」と呼ぶときも同じだった。僕たちが学校で同じ一つの仮名として教わった音の中に、ぬいの舌の上ではまだ古い川の筋みたいな境界線が生き残っている。", "sceneBreak": false}, {"type": "dialogue", "text": "「おばあちゃんも、昔はそうやって喋ってたの」", "sceneBreak": false}, {"type": "narrative", "text": "　僕が訊くと、ぬいはざるの中の赤い粒を親指の腹でひと粒だけ選り分け、傷んだ豆を三角コーナーへ弾き落とした。", "sceneBreak": false}, {"type": "dialogue", "text": "「姉ちゃんのさきは、うちなんかよりずっと声が大きくて、節回しのきれいな娘だったよ。早川の谷は深くて川音がやかましいから、声を途中で跳ね上げんと向こう岸の畑まで届かんのさ。秋に栗を拾いながら姉ちゃんが『あめが来るぞう』と上げる声で呼ぶと、沢の白い岩に声が当たって、谷じゅうが明るく鳴ったもんだ」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいは蛇口を閉め、ざるの底を二、三度振って水気を切った。", "sceneBreak": false}, {"type": "dialogue", "text": "「それがこの盆地へ降りてきた途端、近所のおかみさん連中から、やれ歌っとるみたいでおかしいだの、言葉の尻が上がって生意気に聞こえるだのと笑われてな。三年後にうちが婚礼の祝いを持って顔を見に来たときには、もう別人のように口を閉ざしとった。何か言おうとするたびに喉の真ん中がひくひく動いて、結局、平らな短い言葉しか出てこんようになってな」", "sceneBreak": false}, {"type": "narrative", "text": "　僕は食卓の向こうにある仏壇の暗い扉を見た。祖母が亡くなる前の冬、こたつでみかんを剥いていた僕に「寒くないか」とだけ訊いたときの、擦れた低い声を覚えている。あのとき祖母は、問いかけの尻を上げるのが普通であるはずの「寒くないか」さえ、定規で上から押さえつけたように真っ平らな高さで言った。上がりたがる自分の声を、喉の奥で必死に踏みつけていたのかもしれないと思うと、胸の奥に冷たい小石を呑み込んだような重さが残った。", "sceneBreak": false}, {"type": "narrative", "text": "　母とぬいが寝静まったあと、僕はパジャマの上にウィンドブレーカーを羽織り、スマートフォンの灯りだけを頼りに裏庭の作業場へ戻った。仏壇の前に置かれた風呂敷包みを勝手に開ける気にはなれなかったが、昼間に棚の奥を片づけたとき、通信機部品の引き出しの下にもうひとつ、黒いベークライトの古い箱があったのを思い出したからだった。", "sceneBreak": true}, {"type": "narrative", "text": "　冷え切った作業場の丸椅子に座り、僕は埃まみれのベークライトの箱を作業台へ引き上げた。蓋を開けると、真鍮の小さな挟み具が二本並んだ台座と、昔の電話機から外したような黒い受話器がコードで繋がっている。蓋の裏には祖父の角張った鉛筆の字で「発振検品器」と書いた紙が貼ってあった。脇の隙間には、油紙の表紙がついた薄い手控え帳も差し込まれている。", "sceneBreak": false}, {"type": "narrative", "text": "　乾電池を入れる筒の錆をマイナスドライバーの先で削り落とし、懐中電灯から抜いた新しい電池を押し込むと、豆電球がかすかに橙色の光を宿した。", "sceneBreak": false}, {"type": "narrative", "text": "　僕はまず、引き出しの薬包紙から四角い工業用の水晶薄片を一枚取り出し、真鍮の挟み具のあいだへそっと噛ませた。受話器を右耳に押し当て、台座の小さなスイッチを入れる。", "sceneBreak": false}, {"type": "narrative", "text": "　一瞬の静寂のあと、受話器の黒い膜の奥から、キィ、と針のように細く澄み切った音が立ち上がった。吹奏楽部のチューナーが基準音を鳴らすときよりもさらに揺らぎのない、氷の糸を真っ直ぐに張り詰めたような一定の震えだった。水晶に電気が通ると目に見えない速さで石が震え、時計や無線機の時間を刻むのだと理科の授業で習ったことがある。この均質な四角い石は、祖父が切り出してから何十年経った今でも、言われたとおりの高さで正確に震え続けていた。", "sceneBreak": false}, {"type": "narrative", "text": "　僕はスイッチを切り、作業台の隅の屑入れに残っていた、白い継ぎ目のある端材のかけらをピンセットで拾い上げた。昼間の桐箱に入っていた薄片と同じ、双晶から削り出された半端な板で、角が少し欠けたために箱から外されたものらしかった。", "sceneBreak": false}, {"type": "narrative", "text": "　四角い薄片を外し、その双晶のかけらを真鍮の挟み具へ挟み直す。もう一度スイッチを入れ、受話器へ耳を澄ませた。", "sceneBreak": false}, {"type": "narrative", "text": "　カチ、と乾いた接点の音がしたきり、受話器の奥は深い井戸の底のように静まり返っていた。", "sceneBreak": false}, {"type": "narrative", "text": "　僕は息を止め、挟み具の位置を少しずらしてもう一度スイッチを入れ直した。その瞬間だけ、受話器の膜がプツ、と目に見えない空気を吸い込むように微かに窪んだ気がした。けれど音は立ち上がらない。豆電球は同じ橙色に灯っているから、電気は確かに石の中を通っているはずだった。", "sceneBreak": false}, {"type": "narrative", "text": "　手控え帳の古い頁をめくると、祖父の硬い筆跡で、双晶の断面を描いたらしい略図がいくつも並んでいた。左右に並んだ結晶の片方に「右」、もう片方に「左」と記され、真ん中のぎざぎざした境界線を挟んで、矢印が互いに反対を向いている。余白には短い走り書きがあった。", "sceneBreak": false}, {"type": "narrative", "text": "　両極より同じ波を送れば、右の伸びと左の縮みが継ぎ目にて噛み合い、震えは相殺す。不良として廃棄。", "sceneBreak": false}, {"type": "narrative", "text": "　僕は豆電球の鈍い光のなかで、真鍮の爪に挟まれた半透明のかけらを見つめた。石は死んでいなかった。電気が流れた瞬間、右半分と左半分はそれぞれ精いっぱいの力で震えようとしているのに、生まれつき向きが裏返しであるせいで、真ん中の継ぎ目で互いの力を打ち消し合い、外からはただの黙り込んだ石に見えているだけだった。", "sceneBreak": false}, {"type": "narrative", "text": "　それならば、なぜ祖父はそんな鳴らない石ばかりをわざわざ薄く磨き上げ、三十枚もの板に「あめ」や「みづ」と奈良田の言葉を彫りつけたのだろう。電気を流しても黙り込むと誰よりよく知っていたはずの職人が、縫い針の先で一文字また一文字と仮名を刻み、その脇に小さな鉤の傷を添えていた夜の手つきを想像すると、作業場の冷たい空気が急に耳の奥でざわめいた気がした。", "sceneBreak": false}, {"type": "narrative", "text": "　僕はスイッチを切り、双晶のかけらをピンセットで外してポケットのハンカチに包んだ。高窓の外では、甲府盆地の平らな夜空を薄い雲が音もなく流れていた。", "sceneBreak": false}]}, {"heading": "第三章　沈んだ谷の上がり目", "blocks": [{"type": "narrative", "text": "　翌朝、甲府駅のホームを出た身延線の電車は、刈り取りの終わった稲株と柿の木の並ぶ平らな盆地を南へ向かってゆっくりと走った。向かいの座席に腰を下ろしたぬいは、風呂敷で包んだブリキ缶を自分の膝のうえに両手で抱え、窓の外を流れる低い屋根の列を黙って眺めていた。僕のリュックサックの底には水筒とタオル、それに上着のポケットには昨夜ハンカチに包んだ欠けた双晶のかけらがひとつ入っている。", "sceneBreak": false}, {"type": "narrative", "text": "　市川大門を過ぎ、富士川に沿うように線路が山あいへ分け入ると、車窓の光が少しずつ傾きを変えた。下部温泉の駅前で小さな乗合バスに乗り換え、早川の支流へ向かって県道を折れた途端、それまで遠くに霞んでいた山肌が両側から一気にせり上がってきた。", "sceneBreak": false}, {"type": "narrative", "text": "　バスの窓ガラス越しに見上げる崖は、削り立ての石英や花崗岩の白い肌を剥き出しにしていた。朝の斜めの陽光がその白い岩壁に当たって細かく砕け、ずっと下の谷底を流れる青碧色の川面へ銀色の粒になって降り注いでいる。道が曲がるたびに、冷たい沢の匂いが換気口からすうっと車内へ流れ込み、甲府の乾いた埃の匂いを洗い流していった。", "sceneBreak": false}, {"type": "narrative", "text": "　途中の小さな停留所で、背負い籠を持った白髪の老婆がひとり乗り込んできて、ぬいの隣の席に腰を下ろした。", "sceneBreak": false}, {"type": "dialogue", "text": "「ぬいちゃん、甲府へ出とったんか。あめが降らんで、沢のいしまで白うなったな」", "sceneBreak": false}, {"type": "dialogue", "text": "「ほんになあ。かわが痩せちまって、みづもすっかり冷とうなった」", "sceneBreak": false}, {"type": "narrative", "text": "　二人が交わす短い言葉を、僕は後ろの席から目を閉じて聴いていた。老婆が「あめが」と言ったとき、やはり二番目の「め」が澄んだ笛みたいにきゅっと高く跳ね上がり、「いしまで」では真ん中で沈んだ声が「ま」へ向かって持ち上がった。ぬいが「かわが」と応じると最後の「が」が空へ浮き上がり、「みづも」と言うときには舌先が歯茎を弾く小さな水音と一緒に最初の「み」だけが澄んだ雫のように高く弾けた。", "sceneBreak": false}, {"type": "narrative", "text": "　目を閉じたままでいると、エンジンの低い唸りのうえを、二人の声だけが白い川鳥のように交互に舞い上がっては滑空していくのが見えた。盆地の学校やテレビのニュースで毎日浴びている言葉は、どれも頭を高く出したあと、階段を降りるように下へ下へと落ちていく。重力に引かれて落ちていく言葉のなかでは、人は黙っていても地面に足がつく。けれどこの切り立った深い谷では、声を下へ落としてしまえば、川音と岩壁の影に呑まれて誰の耳にも届かない。だからこの土地の言葉は、大事な意味の継ぎ目に来るたび、自分の喉で声を空へ放り上げるように出来ているらしかった。", "sceneBreak": false}, {"type": "narrative", "text": "　長いトンネルをいくつも抜け、バスが終点の奈良田へ滑り込む頃には、僕の耳の奥でも、言葉の終わりが下がるより上がるほうがずっと自然なことのように感じられ始めていた。", "sceneBreak": false}, {"type": "narrative", "text": "　バス停から温泉へ向かう坂道を外れ、ぬいは吊り橋の手前にある古い石段を湖のほうへ降りていった。杉の落ち葉が積もった急な斜面を抜けると、急に視界が開け、山の裂け目を埋める細長い湖が現れた。", "sceneBreak": true}, {"type": "narrative", "text": "　奈良田湖と呼ばれる西山ダムの貯水池だった。ただ、僕が写真で見たことのある満水の湖とはまるで姿が違っていた。濃い翡翠色をした水面は谷のずっと底のほうまで退いていて、本来なら水の底に沈んでいるはずの灰白色の泥の斜面が、陽に乾いてひび割れながら広く露出している。そしてその白い斜面の途中に、丸い川石を人の手で丁寧に積み上げた古い石垣の列が、幾重もの白い肋骨のようにくっきりと浮かび上がっていた。", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいは息も切らさずに乾いた斜面を踏みしめ、一番上の石垣の縁まで降りると、平らな天端石のうえに風呂敷包みを下ろした。", "sceneBreak": false}, {"type": "dialogue", "text": "「あそこに見える石垣の下にな、うちの家の土間と、姉ちゃんが毎日草を刈っとった桑畑があった」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいが指さした先では、翡翠色の静かな水面が秋の空を映してぴくりとも動かずに光っている。風が一陣、谷の下流から吹き上がってきて、乾いた泥の匂いと冷たい水の匂いを同時に頬へ当てていった。", "sceneBreak": false}, {"type": "dialogue", "text": "「姉ちゃんが甲府へ嫁に行った年の秋に、ダムの扉が閉まってな。ここらの畑も道も、ひと月ほどでぜんぶみづの底へ入った」", "sceneBreak": false}, {"type": "narrative", "text": "　僕はぬいの隣にしゃがみ込み、白い石垣の隙間に挟まった小さな貝殻の欠片を指でつついた。", "sceneBreak": false}, {"type": "dialogue", "text": "「おじいちゃんは、ダムができる前にここへ来たことがあったの」", "sceneBreak": false}, {"type": "dialogue", "text": "「一度だけ来たよ」とぬいは目を細めて対岸の白い崩落地のほうを見た。「ダムの堰堤ができる前の夏に、工事の事務所と営林署を繋ぐ無線機の具合が悪くなってな。甲府の工場から、水晶の発振子を削る若い職人がひとり、道具箱を背負って山道を登ってきた。それが勝造だった」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいの乾いた声のなかに、遠い夏の沢音が混じるようだった。", "sceneBreak": false}, {"type": "narrative", "text": "　山の冷気と湿気で無線機の周波数が狂い、二十歳そこそこだった勝造は、沢のほとりの石に座って朝から晩まで水晶の薄い板を砥石で微調整していたという。その沢の向こう岸にあった桑畑で、十九歳だった姉のさきが籠を背負い、下の河原で遊んでいたぬいに向かって声を張り上げた。", "sceneBreak": false}, {"type": "dialogue", "text": "「いしが滑るぞ、みづを汲んでこい。あめが来るぞう、ってな。姉ちゃんの声が谷の空気を切って跳ね上がったとき、沢の石に座っとった勝造が、耳に当てとった無線機の受話器を外して、ぽかんと口を開けたままこっちを見上げとったのを覚えとる」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいはかすかに口もとを緩めたが、すぐにその笑みを引っ込めた。", "sceneBreak": false}, {"type": "dialogue", "text": "「あいつは姉ちゃんの顔より先に、あの裏返しの声に惚れたんだよ。それほど珍しい宝物みたいに聴き惚れとったくせに、いざ甲府の自分の家へ連れて帰ったら、周りの連中が姉ちゃんの言葉を笑うのを止めもせなんだ。姉ちゃんが盆地の平らな口に合わせようとして喉を詰まらせ、だんだん石みたいに黙り込んでいっても、あいつは裏の作業場に籠もって鳴らん双晶ばっかり削っとった」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいは石垣のうえで風呂敷の結び目をほどき、ブリキ缶の蓋を外して、なかから桐の木箱を取り出した。山の澄み切った直射日光の下で見る桐箱は、作業場の薄暗がりで見たときよりもずっと白く乾いて見えた。", "sceneBreak": false}, {"type": "dialogue", "text": "「昔、勝造に文句を言ってやったことがある。姉ちゃんが黙っちまったのに、お前は何を石なんか削っとるんだってな。そしたらあいつ、ピンセットを持ったまま真顔でこう言ったよ。普通の石は東京と同じ平らな電気でしか鳴らんけんど、右と左が裏返しに噛み合ったこの双晶なら、さきの声でだけ鳴るはずだって」", "sceneBreak": false}, {"type": "narrative", "text": "　僕は思わず顔を上げ、ぬいの手もとの桐箱を見た。", "sceneBreak": false}, {"type": "dialogue", "text": "「結局、鳴りゃあせんかった」とぬいは桐の蓋を開け、真綿のうえに並んだ三十枚の薄片を眩しそうに見下ろした。「姉ちゃんが三年前に死ぬまで、この石は一度も鳴らんかったし、姉ちゃんの声も戻らんかった。職人の意地だか未練だか知らんけんど、鳴らん石に名前だけ彫って箱に閉じ込めとくなんて、姉ちゃんが浮かばれんら。今日ここで、ぜんぶ奈良田のみづへ返してやる」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいの節くれ立った指が、真綿のうえから「あめ」と彫られた一番端の薄片をつまみ上げた。山の強い日差しが半透明の板を貫き、ぬいの皺の深い掌のうえに、虹色の小さな光の斑がゆらりと落ちた。", "sceneBreak": false}]}, {"heading": "第四章　みづの底から", "blocks": [{"type": "narrative", "text": "　ぬいが「あめ」と彫られた薄片を親指と人差し指でつまみ、翡翠色の湖面へ向かって軽く腕を引いたとき、山の真上から差す秋の強い光がその半透明の板を真っ直ぐに射抜いた。", "sceneBreak": false}, {"type": "dialogue", "text": "「ちょっと待って、ぬいおばあちゃん」", "sceneBreak": false}, {"type": "narrative", "text": "　僕は思わず声を出して立ち上がり、ぬいの手もとを覗き込んだ。", "sceneBreak": false}, {"type": "dialogue", "text": "「なんだよ、ここまで来て惜しくなったか」", "sceneBreak": false}, {"type": "dialogue", "text": "「そうじゃなくて、その石の真ん中を見て。白い筋が入ってるでしょ」", "sceneBreak": false}, {"type": "narrative", "text": "　作業場の北向きの曇った高窓の下では、うっすらとした影にしか見えなかった双晶の継ぎ目が、遮るもののない渓谷の直射日光を浴びて、氷に入ったひびのように白く鮮やかに浮き出ていた。さらに奇妙なことに、板の表面に縫い針の先で彫られた「あめ」という二文字は、板の真ん中を外れ、白い継ぎ目より右側の半分にだけ窮屈に寄せて刻まれていた。", "sceneBreak": false}, {"type": "narrative", "text": "　僕はしゃがみ込んで桐箱のなかの他の薄片も端から太陽へかざしてみた。「いし」も、「はな」も、「みづ」も、三十枚すべてが同じだった。白い継ぎ目を境にして左半分には傷ひとつなく、右半分の澄んだ領域にだけ小さな平仮名が彫られている。そしてきのうルーペで見つけた小さな鉤の傷が、陽光を撥ねて銀色の砂粒みたいに光っていた。", "sceneBreak": false}, {"type": "narrative", "text": "　並べて見比べると、その鉤の位置にははっきりとした規則があった。「あめ」の板では一文字目の「あ」のすぐ右肩に、上を向いた小さな鉤が刻まれている。「いし」と「かわ」の板では、二文字目の「し」と「わ」の右肩に同じ上向きの鉤がある。反対に、「はな」と「みづ」の板にはどこにも鉤がなく、最初の一文字目だけが他より少し深く彫られていた。さらに真綿の一番奥から出てきた少し大ぶりの一枚には、四文字で「ありがたし」とあり、三文字目の「が」の右肩に小さな鉤が添えられている。", "sceneBreak": false}, {"type": "narrative", "text": "　きのうの夜、作業場の手控え帳で読んだ祖父の硬い文字が、耳の奥の記憶と一緒にひとつに繋がった。両極より同じ波を送れば、右の伸びと左の縮みが継ぎ目にて噛み合い、震えは相殺す。", "sceneBreak": false}, {"type": "dialogue", "text": "「これ、ただ名前を彫ったんじゃないよ」と僕は箱のうえから顔を上げて言った。「この小さい引っ掻き傷、奈良田の声がどこで跳ね上がるかの目印だ」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいは眉を寄せ、自分の指先にある「あめ」の板を目の高さまで持ち上げた。", "sceneBreak": false}, {"type": "dialogue", "text": "「目印って、勝造がか」", "sceneBreak": false}, {"type": "dialogue", "text": "「うん。『あめ』なら『あ』の次で上がるから一文字目の肩に鉤がある。『いし』なら二文字目の次で『が』が上がるから二文字目の肩に彫ってある。きのうの夜、おじいちゃんの検品器でこの石の端材に電気を流してみたんだ。全体に同じ電気を流すと、右と左が裏返しに震えて、真ん中の継ぎ目で力を消し合っちゃうから音が出ない。でも、電気じゃなくて、左半分を指で押さえて殺しておいて、文字が彫ってある右半分だけに声をぶつけたらどうなると思う」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいは薄い板を透かし見たまま、すぐには答えなかった。谷底の湖面から冷たい風が吹き上がってきて、ぬいの白い後れ毛を頬の横で揺らした。", "sceneBreak": false}, {"type": "dialogue", "text": "「水晶って、外から力をかけて歪ませると、なかに小さい電気が起きて震え返す性質があるんだよ。おじいちゃんはきっと、甲府の平らな電気じゃなくて、おばあちゃんの跳ね上がる声の息をこの右半分にだけ当てて、石を鳴らそうとしたんだ。でも、おじいちゃん自身は甲府の生まれで平らな口しか持ってないから、自分で何度読んでも正確な上がり目が出せなくて、忘れないように針で印をつけたんだと思う」", "sceneBreak": false}, {"type": "narrative", "text": "　言い終えると、自分の声が乾いた石垣の斜面に吸い込まれて消えた。しばらくのあいだ、遠くの沢で水が岩を噛む低い音だけが聞こえていた。", "sceneBreak": false}, {"type": "narrative", "text": "　やがてぬいは、ふんと鼻の先で小さく息を吐いた。", "sceneBreak": false}, {"type": "dialogue", "text": "「馬鹿な男だよ、勝造は。いい歳をした機械の石屋が、そんなまじないみたいな真似を何十年も続けとったのか」", "sceneBreak": false}, {"type": "narrative", "text": "　口ではそう毒づいたけれど、湖へ向かって振り上げかけていたぬいの右腕は、ゆっくりと膝のまえまで下りていた。ぬいは桐箱のなかから「みづ」と彫られた薄片をもう一枚つまみ上げると、自分が持っていた「あめ」の板を僕の掌へ押しつけた。", "sceneBreak": false}, {"type": "dialogue", "text": "「薄っぺらい石だ。力任せにつまんで割るんじゃねえよ、澄」", "sceneBreak": false}, {"type": "dialogue", "text": "「鳴らしてみるの」", "sceneBreak": false}, {"type": "dialogue", "text": "「ここまで持ってきて、黙ったまま沈めたんじゃ寝覚めが悪いら。あんたの理屈が合っとるかどうか、試してからでも遅くはない」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいは白い石垣の縁にまっすぐ立ち、翡翠色の湖面へ向かって顎を少し引いた。そして「みづ」の板の白い継ぎ目より左側だけを親指と人差し指の腹でしっかりと挟み、文字の彫られた右半分が宙に浮くようにして、自分の薄い唇のすぐまえにかざした。", "sceneBreak": false}, {"type": "narrative", "text": "　僕もぬいの隣に並び、言われたとおりに「あめ」の板の左半分だけを指先で押さえ、右半分の澄んだ端を下唇のすぐ近くに寄せた。太陽の熱をわずかに含んだ石英の冷たさが、吐く息に触れてかすかに曇る。", "sceneBreak": false}, {"type": "dialogue", "text": "「盆地の平らな口は捨てなよ」とぬいが横を向かずに言った。「最初は谷の底の小石みたいに低く置く。そこから鉤の印のところで、向こう岸の白い崖のてっぺんへ声を放り投げるんだ。いくよ」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいが細長い胸いっぱいに山の空気を吸い込み、僕も同じように冷たい空気を肺の奥まで入れた。", "sceneBreak": false}, {"type": "dialogue", "text": "「あめが」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいの「みづも」という声と、僕の「あめが」が同時に石垣のうえから飛び出した。一拍目の「あ」を低く抑えたまま唇の前の薄片へ息を当て、次の「め」で喉の奥を一気に開いて音程を空へ跳ね上げる。一度目は僕の声がわずかに力んで上ずり、石は何も応えなかった。", "sceneBreak": false}, {"type": "dialogue", "text": "「肩に力を入れるな。舌と喉だけで跳ね上げるんだよ、もう一回」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいが今度は僕と同じ言葉を唱えた。", "sceneBreak": false}, {"type": "dialogue", "text": "「あめが」", "sceneBreak": false}, {"type": "narrative", "text": "　低く置いた「あ」のすぐ後ろから、ぬいの乾いて澄み切った「め」が白い鳥みたいに垂直に立ち上がった。僕は吹奏楽部で隣の管の倍音に自分の音を溶け込ませるときのように、ぬいの声の跳ね上がる角度へ自分の「め」をぴたりと重ねた。", "sceneBreak": false}, {"type": "narrative", "text": "　二つの声が同じ高さで重なった、その一瞬だった。", "sceneBreak": false}, {"type": "narrative", "text": "　唇のすぐまえで指先に挟んでいた水晶の薄い板が、僕たちの息の圧力を受けて、チリ、とも、ビィ、ともつかない微かな震えを指の腹へ返した。音と呼ぶにはあまりにも小さく、氷の薄皮のなかに極細の電流がひと筋だけ走ったような、乾いた鋭い痺れだった。", "sceneBreak": false}, {"type": "narrative", "text": "　遅れて、湖を挟んだ対岸の白い花崗岩の絶壁から、めえが、と高い山びこが澄んだ輪郭のまま返ってきた。水底に沈んだ古い桑畑と土間のうえを、その跳ね上がった声だけが重力から解かれたように軽々と渡っていく。", "sceneBreak": false}, {"type": "narrative", "text": "　横を見ると、ぬいは唇のまえに「みづ」の板をかざしたまま、細めた目で対岸の白い崖を見つめていた。ぬいの指先にも同じ痺れが届いたのかどうか、僕は訊かなかった。ぬいの乾いた喉が小さく上下し、皺の寄った目尻に秋の光が白く溜まっていたからだ。", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいはやがて、桐箱の一番底に残っていた四文字の薄片をつまみ上げた。継ぎ目の左を指で押さえ、唇のまえに掲げて、今度は僕に合図をせずひとりで声を出した。", "sceneBreak": false}, {"type": "dialogue", "text": "「ありがたし」", "sceneBreak": false}, {"type": "narrative", "text": "　低く静かに始まった声が、三文字目の「が」から次の「た」へ向かって高く澄んで跳ね上がり、そのまま秋の青い空へ吸い込まれていった。ぬいは震えの残るその一枚だけを、水切りをする子どものように手首を返して、眼下の翡翠色の水面へ滑らせるように放った。薄い水晶の板は、陽の光を二度、三度ときらきら裏返しながら弧を描き、音もなく奈良田の水へ吸い込まれて見えなくなった。", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいは自分の指先に残った白い粉を払うと、残りの二十九枚が並んだ桐箱の蓋をぱたんと閉め、手早くブリキ缶へ戻して風呂敷で包み直した。それから、その包みを僕の胸もとへぐいと押しつけてきた。", "sceneBreak": false}, {"type": "dialogue", "text": "「え、全部沈めるんじゃなかったの」", "sceneBreak": false}, {"type": "dialogue", "text": "「一枚返しゃあ十分だよ。全部捨てたら、勝造のやつが夜中にうちの枕もとへ文句を言いに来るら」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいは空になった両手で自分の腰をとんと叩き、来たときと同じ背筋の伸びた姿勢で、落ち葉の積もった石段のほうへ向き直った。", "sceneBreak": false}, {"type": "dialogue", "text": "「あんたが持っときな、澄。盆地へ帰って、あんたの口がまた平らになって息が詰まりそうになったら、たまにその石を裏返して鳴らしてやればいい」", "sceneBreak": false}, {"type": "narrative", "text": "　ぬいはそれだけ言うと、返事も待たずに杉の落ち葉を踏みしめて石段を登り始めた。僕は腕のなかの風呂敷包みを抱え直し、まだ親指の腹にかすかな痺れが残っているのを確かめてから、白い木漏れ日の揺れる斜面をぬいの背中を追って登り出した。", "sceneBreak": false}, {"type": "end", "text": "（了）", "sceneBreak": true}]}]};
+
+const TWIN_LEXICON = [
+  { key: "あめが", tag: "ア┌メガ", word: "ame_ga", note: "あ┌め・が（助詞込み3拍） ： 奈良田1型上げ核（低→高→低）" },
+  { key: "「あめ」", tag: "ア┌メ", word: "ame_2", note: "あ┌め（2拍） ： 右肩の鉤印（低→高へ跳ね上がる上げ核）" },
+  { key: "『あめ』", tag: "ア┌メ", word: "ame_2", note: "あ┌め（2拍） ： 奈良田1型上げ核（低→高）" },
+  { key: "いしまで", tag: "イシ┌マデ", word: "ishi_made", note: "いし┌・まで（助詞込み4拍） ： 奈良田2型上げ核（3拍目マへ跳躍）" },
+  { key: "いしが", tag: "イシ┌ガ", word: "ishi_ga", note: "いし┌・が（助詞込み3拍） ： 奈良田2型上げ核（助詞ガへ跳躍）" },
+  { key: "「いし」", tag: "イシ┌", word: "ishi_2", note: "いし┌（2拍） ： 2拍目後端の上げ核（高→低）" },
+  { key: "『いし』", tag: "イシ┌", word: "ishi_2", note: "いし┌（2拍） ： 奈良田2型単独形（高→低）" },
+  { key: "かわが", tag: "カワ┌ガ", word: "ishi_ga", note: "かわ┌・が（助詞込み3拍） ： 奈良田2型上げ核（助詞ガへ跳躍）" },
+  { key: "「かわ」", tag: "カワ┌", word: "ishi_2", note: "かわ┌（2拍） ： 奈良田2型単独形（高→低）" },
+  { key: "はなが", tag: "［ハ］ナガ", word: "hana_ga", note: "［ハ］ナ・ガ（助詞込み3拍） ： 奈良田0型（語頭1拍目のみ高）" },
+  { key: "「はな」", tag: "［ハ］ナ", word: "hana_2", note: "［ハ］ナ（2拍） ： 奈良田0型（高→低）" },
+  { key: "みづ", tag: "[midu]", word: "midu_2", note: "みづ [midu]（2拍） ： 室町以前の四つ仮名（歯茎閉鎖音）" },
+  { key: "あづき", tag: "[aduki]", word: "aduki_3", note: "あづき [aduki]（3拍） ： 四つ仮名の保持" },
+  { key: "ありがたし", tag: "アリガ┌タシ", word: "arigatashi_5", note: "ありが┌たし（5拍） ： 四拍目タへ跳躍する古語礼" },
+  { key: "双晶", tag: "84°33′", word: "twin_chord", note: "日本式双晶（水晶共鳴和音） ： 接合角 84°33′ の鏡像結晶" },
+  { key: "水晶の薄い板", tag: "32,768Hz", word: "twin_chord", note: "水晶振動子（水晶共鳴和音） ： 32,768Hz 基準クロック薄片" },
+  { key: "石英", tag: "SiO₂", word: "twin_chord", note: "石英（水晶共鳴和音） ： 三方晶系圧電結晶" }
+];
+
+const KANJI_NUMS = ["一", "二", "三", "四"];
+
+const LEX_BY_KEY = new Map();
+TWIN_LEXICON.forEach((item, idx) => LEX_BY_KEY.set(item.key, { ...item, idx }));
+const SORTED_KEYS = Array.from(LEX_BY_KEY.keys()).sort((a, b) => b.length - a.length);
+const LEX_REGEX = new RegExp(
+  SORTED_KEYS.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"),
+  "g"
+);
+
+let totalNodes = 0;
+let crystallizedNodes = 0;
+let alignmentProgress = 0; // 0 (birefringent split) -> 1 (single focus)
+let cancelOffset = 0;
+let pulseRing = 0;
+let allCrystallized = false;
+let whisperTimer = null;
+let lastTriggerFocus = null;
+
+const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+let reducedMotion = motionQuery.matches;
+window.__REDUCED_MOTION__ = reducedMotion;
+document.documentElement.dataset.reducedMotion = reducedMotion ? "true" : "false";
+motionQuery.addEventListener("change", (e) => {
+  reducedMotion = e.matches;
+  window.__REDUCED_MOTION__ = reducedMotion;
+  document.documentElement.dataset.reducedMotion = reducedMotion ? "true" : "false";
+  drawTwin();
+});
+
+function escHtml(s) {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function whisper(msg) {
+  const el = document.getElementById("whisper-footnote");
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add("visible");
+  if (whisperTimer) clearTimeout(whisperTimer);
+  whisperTimer = setTimeout(() => el.classList.remove("visible"), 4200);
+}
+
+function decorateTwinNodes(rawLine) {
+  let out = "";
+  let lastIndex = 0;
+  LEX_REGEX.lastIndex = 0;
+  let m;
+  while ((m = LEX_REGEX.exec(rawLine)) !== null) {
+    if (m.index > lastIndex) {
+      out += escHtml(rawLine.slice(lastIndex, m.index));
+    }
+    const token = m[0];
+    const info = LEX_BY_KEY.get(token);
+    const hasQuotes = (token.startsWith("「") && token.endsWith("」")) || (token.startsWith("『") && token.endsWith("』"));
+    const openQ = hasQuotes ? escHtml(token[0]) : "";
+    const closeQ = hasQuotes ? escHtml(token.slice(-1)) : "";
+    const innerWord = hasQuotes ? token.slice(1, -1) : token;
+    const label = escHtml(`${innerWord}（${info.tag}）`);
+    out += `${openQ}<span class="twin-node" role="button" tabindex="0" aria-pressed="false" aria-label="${label}" data-lex="${info.idx}"><span class="twin-word">${escHtml(innerWord)}</span><span class="pitch-tag" aria-hidden="true">${escHtml(info.tag)}</span></span>${closeQ}`;
+    lastIndex = m.index + token.length;
+  }
+  if (lastIndex < rawLine.length) {
+    out += escHtml(rawLine.slice(lastIndex));
+  }
+  return out;
+}
+
+function renderManuscript() {
+  const titleEl = document.getElementById("doc-title");
+  if (WORK_DATA.title.includes("、")) {
+    const parts = WORK_DATA.title.split("、");
+    titleEl.innerHTML = `<span class="title-phrase">${escHtml(parts[0])}、</span><span class="title-phrase">${escHtml(parts.slice(1).join("、"))}</span>`;
+  } else {
+    titleEl.textContent = WORK_DATA.title;
+  }
+
+  const tabsEl = document.getElementById("chapter-tabs");
+  const bodyEl = document.getElementById("manuscript-body");
+  tabsEl.innerHTML = "";
+  bodyEl.innerHTML = "";
+
+  WORK_DATA.chapters.forEach((ch, cIdx) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "num-btn" + (cIdx === 0 ? " current" : "");
+    btn.dataset.chIndex = String(cIdx);
+    btn.setAttribute("aria-label", ch.heading);
+    btn.title = ch.heading;
+    btn.textContent = KANJI_NUMS[cIdx] || String(cIdx + 1);
+    btn.onclick = () => {
+      document.querySelectorAll(".num-btn").forEach(b => b.classList.remove("current"));
+      btn.classList.add("current");
+      const target = document.getElementById("ch-sec-" + cIdx);
+      if (bodyEl.classList.contains("vertical-mode")) {
+        target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", inline: "end", block: "nearest" });
+      } else {
+        target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+      }
+    };
+    tabsEl.appendChild(btn);
+
+    const sec = document.createElement("section");
+    sec.className = "chapter-section";
+    sec.id = "ch-sec-" + cIdx;
+    sec.dataset.chIndex = String(cIdx);
+
+    const h2 = document.createElement("h2");
+    h2.className = "chapter-heading";
+    h2.textContent = ch.heading;
+    sec.appendChild(h2);
+
+    ch.blocks.forEach(blk => {
+      const p = document.createElement("p");
+      p.className = "lit-p" +
+        (blk.type === "dialogue" ? " dialogue" : "") +
+        (blk.type === "end" ? " end-mark" : "") +
+        (blk.sceneBreak && blk.type !== "end" ? " scene-break" : "");
+      if (blk.type === "end") {
+        p.textContent = blk.text;
+      } else {
+        p.innerHTML = decorateTwinNodes(blk.text);
+      }
+      sec.appendChild(p);
+    });
+
+    bodyEl.appendChild(sec);
+  });
+
+  const nodes = document.querySelectorAll(".twin-node");
+  totalNodes = nodes.length;
+  nodes.forEach((node) => {
+    node.addEventListener("click", () => crystallizeNode(node));
+    node.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter" || ev.key === " ") {
+        ev.preventDefault();
+        crystallizeNode(node);
+      }
+    });
+  });
+
+  bodyEl.addEventListener("wheel", (ev) => {
+    if (!bodyEl.classList.contains("vertical-mode")) return;
+    if (Math.abs(ev.deltaY) > Math.abs(ev.deltaX)) {
+      bodyEl.scrollLeft -= ev.deltaY;
+      ev.preventDefault();
+    }
+  }, { passive: false });
+
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(ent => {
+        if (ent.isIntersecting) {
+          const idx = ent.target.dataset.chIndex;
+          document.querySelectorAll(".num-btn").forEach(b => {
+            b.classList.toggle("current", b.dataset.chIndex === idx);
+          });
+        }
+      });
+    }, { rootMargin: "-15% 0px -70% 0px" });
+    document.querySelectorAll(".chapter-section").forEach(s => io.observe(s));
+  }
+
+  window.addEventListener("scroll", () => {
+    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const pct = Math.min(100, Math.max(0, (window.scrollY / maxScroll) * 100));
+    const bar = document.getElementById("progress-thread");
+    if (bar) bar.style.width = pct.toFixed(1) + "%";
+  }, { passive: true });
+}
+
+function crystallizeNode(node) {
+  const lexIdx = parseInt(node.dataset.lex || "0", 10);
+  const item = TWIN_LEXICON[lexIdx];
+  if (!node.classList.contains("crystallized")) {
+    node.classList.add("crystallized");
+    node.setAttribute("aria-pressed", "true");
+    crystallizedNodes++;
+  }
+  alignmentProgress = Math.min(1, alignmentProgress + 0.16);
+  pulseRing = 1.0;
+  if (item) {
+    playModalTone(item.word || "twin", "narada");
+    whisper(`${item.note}（結晶 ${allCrystallized ? totalNodes : crystallizedNodes}/${totalNodes}）`);
+  }
+  requestTwinFrame();
+}
+
+function crystallizeNearest(count) {
+  const pending = Array.from(document.querySelectorAll(".twin-node:not(.crystallized)"));
+  pending.slice(0, count).forEach(n => {
+    n.classList.add("crystallized");
+    n.setAttribute("aria-pressed", "true");
+    crystallizedNodes++;
+  });
+}
+
+// ============================================================================
+// Pure Crystalline Modal Quartz Audio (Sakamoto-inspired Glass Sine/Triangle)
+// ============================================================================
+let audioCtx = null;
+let micStream = null;
+let micActive = false;
+let analyser = null;
+let prevPitch = 0;
+
+function ensureAudio() {
+  if (!audioCtx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    audioCtx = new AC();
+  }
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+
+// Play a single crystalline quartz bell partial at `freq` starting at `t`
+function ringQuartzNote(freq, startTime, duration, gainPeak, detuneTwin = false) {
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const partials = detuneTwin ? [1, 1.008] : [1, 2.0, 2.997];
+  partials.forEach((ratio, idx) => {
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = idx === 0 ? "sine" : "triangle";
+    osc.frequency.setValueAtTime(freq * ratio, startTime);
+    const amp = detuneTwin ? gainPeak * 0.5 : gainPeak / (idx * 1.7 + 1);
+    g.gain.setValueAtTime(0.0001, startTime);
+    g.gain.linearRampToValueAtTime(amp, startTime + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, startTime + duration / (idx * 0.4 + 1));
+    osc.connect(g);
+    g.connect(ctx.destination);
+    osc.start(startTime);
+    osc.stop(startTime + duration + 0.04);
+  });
+}
+
+// Musical Quartz Pitch-Accent Sequences (100% Mora-Exact + Pure Crystal Chord for Minerals)
+const QUARTZ_MOTIFS = {
+  // 2拍（単独形）
+  ame_2: {
+    tokyo:  [440.00, 293.66],                   // ア┐メ（2拍：高→低）
+    narada: [293.66, 493.88]                    // ア┌メ（2拍：低→高）
+  },
+  hana_2: {
+    tokyo:  [293.66, 392.00],                   // ハ┌ナ（2拍：低→高）
+    narada: [493.88, 329.63]                    // ［ハ］ナ（2拍：高→低）
+  },
+  ishi_2: {
+    tokyo:  [329.63, 440.00],                   // イ┌シ（2拍：低→高）
+    narada: [440.00, 311.13]                    // ［イ］シ┌（2拍：高→低）
+  },
+  mizu_2: {
+    tokyo:  [329.63, 392.00]                    // 見ず [mizu]（2拍）
+  },
+  midu_2: {
+    narada: [523.25, 329.63]                    // 水 [midu]（2拍）
+  },
+  // 3拍（助詞「が」付き・3モーラ語）
+  ame_ga: {
+    tokyo:  [440.00, 329.63, 293.66],           // ア┐メガ（3拍：高→低→低）
+    narada: [293.66, 493.88, 329.63]            // ア┌メガ（3拍：低→高→低）
+  },
+  ishi_ga: {
+    tokyo:  [329.63, 440.00, 293.66],           // イシ┐ガ（3拍：低→高→低）
+    narada: [369.99, 293.66, 523.25]            // ［イ］シ┌ガ（3拍：高→低→助詞ガへ跳躍）
+  },
+  hana_ga: {
+    tokyo:  [293.66, 392.00, 392.00],           // ハ┌ナガ（3拍：低→高→高）
+    narada: [493.88, 329.63, 293.66]            // ［ハ］ナガ（3拍：高→低→低）
+  },
+  aduki_3: {
+    narada: [329.63, 523.25, 369.99]            // あづき [aduki]（3拍）
+  },
+  // 4拍（助詞「まで」付き）
+  ishi_made: {
+    narada: [369.99, 293.66, 523.25, 329.63]    // ［イ］シ┌マデ（4拍：3拍目マへ跳躍→低）
+  },
+  // 5拍（古語礼）
+  arigatashi_5: {
+    tokyo:  [329.63, 440.00, 392.00, 329.63, 293.66],
+    narada: [293.66, 293.66, 329.63, 587.33, 369.99] // アリガ┌タシ（5拍：4拍目タへ跳躍）
+  },
+  // 鉱物語（拍子ではなく水晶音叉の単打共鳴和音）
+  twin_chord: {
+    narada: [293.66, 440.00, 659.25]            // D4 + A4 + E5 同時共鳴和音
+  }
+};
+
+function playModalTone(word, dialect) {
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+  const notes = (QUARTZ_MOTIFS[word] && QUARTZ_MOTIFS[word][dialect]) || QUARTZ_MOTIFS.twin_chord.narada;
+  const isChord = word === "twin_chord" || !QUARTZ_MOTIFS[word];
+  const step = isChord ? 0.0 : 0.175;
+  const isCancel = dialect === "tokyo" && word !== "mizu_2";
+
+  notes.forEach((hz, i) => {
+    const dur = isChord ? 1.25 : (isCancel ? 0.35 : 0.95);
+    const amp = isChord ? 0.042 : (isCancel ? 0.035 : 0.058);
+    ringQuartzNote(hz, now + i * step, dur, amp, isCancel);
+  });
+}
+
+function triggerAntiPhase() {
+  cancelOffset = 1.0;
+  pulseRing = 0;
+  const ctx = ensureAudio();
+  if (ctx) {
+    const now = ctx.currentTime;
+    ringQuartzNote(220, now, 0.2, 0.035, true);
+  }
+  whisper("下げ核応力 ： 左右の結晶歪みが逆位相で相殺し、鳴らない");
+  requestTwinFrame();
+}
+
+function triggerRisingResonance(label) {
+  alignmentProgress = Math.min(1, alignmentProgress + 0.25);
+  pulseRing = 1.0;
+  cancelOffset = 0;
+  crystallizeNearest(5);
+  playModalTone("twin_chord", "narada");
+  whisper(`${label || "上げ核共振"} ： 複屈折が単一焦点へ結晶化（${allCrystallized ? totalNodes : crystallizedNodes}/${totalNodes}）`);
+  requestTwinFrame();
+}
+
+// ============================================================================
+// Microphone Rising-Kernel Voice Detector
+// ============================================================================
+async function toggleMic() {
+  const btn = document.getElementById("btn-mic");
+  if (micActive) {
+    micActive = false;
+    if (micStream) micStream.getTracks().forEach(t => t.stop());
+    btn.classList.remove("listening");
+    btn.setAttribute("aria-pressed", "false");
+    whisper("声の聴取を閉じました");
+    return;
+  }
+  try {
+    const ctx = ensureAudio();
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const src = ctx.createMediaStreamSource(micStream);
+    analyser = ctx.createAnalyser();
+    analyser.fftSize = 2048;
+    src.connect(analyser);
+    micActive = true;
+    btn.classList.add("listening");
+    btn.setAttribute("aria-pressed", "true");
+    whisper("聴取中 ： 低い声から音程を跳ね上げると双晶が共振します");
+    detectVoiceLoop();
+  } catch (e) {
+    whisper("マイク未許可 ： 双晶を上へ撫でるか、滲む語に触れてください");
+  }
+}
+
+function autoCorrelate(buf, sr) {
+  let size = buf.length, rms = 0;
+  for (let i = 0; i < size; i++) rms += buf[i] * buf[i];
+  if (Math.sqrt(rms / size) < 0.014) return -1;
+  let r1 = 0, r2 = size - 1;
+  for (let i = 0; i < size / 2; i++) if (Math.abs(buf[i]) < 0.2) { r1 = i; break; }
+  for (let i = 1; i < size / 2; i++) if (Math.abs(buf[size - i]) < 0.2) { r2 = size - i; break; }
+  buf = buf.slice(r1, r2);
+  size = buf.length;
+  const c = new Float32Array(size);
+  for (let i = 0; i < size; i++) for (let j = 0; j < size - i; j++) c[i] += buf[j] * buf[j + i];
+  let d = 0;
+  while (d < size - 1 && c[d] > c[d + 1]) d++;
+  let maxval = -1, maxpos = -1;
+  for (let i = d; i < size; i++) if (c[i] > maxval) { maxval = c[i]; maxpos = i; }
+  if (maxpos <= 0) return -1;
+  const f0 = sr / maxpos;
+  return (f0 >= 75 && f0 <= 650) ? f0 : -1;
+}
+
+function detectVoiceLoop() {
+  if (!micActive || !analyser) return;
+  const buf = new Float32Array(analyser.fftSize);
+  analyser.getFloatTimeDomainData(buf);
+  const f0 = autoCorrelate(buf, audioCtx.sampleRate);
+  if (f0 > 0) {
+    const ratio = prevPitch > 0 ? f0 / prevPitch : 1;
+    if (prevPitch > 85 && ratio > 1.14 && ratio < 2.2) {
+      triggerRisingResonance(`裏返しの声（${f0.toFixed(0)}Hz ↗）`);
+    }
+    prevPitch = prevPitch * 0.65 + f0 * 0.35;
+  }
+  requestAnimationFrame(detectVoiceLoop);
+}
+
+// ============================================================================
+// Minimalist Hairline 84°33' Frontispiece Twin (Drawn Directly on Paper)
+// ============================================================================
+const twinCanvas = document.getElementById("twin-canvas");
+const tCtx = twinCanvas.getContext("2d");
+let rafId = null;
+let dragY = null;
+
+function drawPrismHairline(ctx, len, wid, stroke, fill) {
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(-wid, -len * 0.22);
+  ctx.lineTo(-wid * 0.88, -len * 0.78);
+  ctx.lineTo(0, -len);
+  ctx.lineTo(wid * 0.88, -len * 0.78);
+  ctx.lineTo(wid, -len * 0.22);
+  ctx.closePath();
+  if (fill) {
+    ctx.fillStyle = fill;
+    ctx.fill();
+  }
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = 1.25;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(0, 0); ctx.lineTo(0, -len);
+  ctx.moveTo(-wid * 0.88, -len * 0.78); ctx.lineTo(0, -len * 0.62); ctx.lineTo(wid * 0.88, -len * 0.78);
+  ctx.lineWidth = 0.65;
+  ctx.globalAlpha = 0.38;
+  ctx.stroke();
+  ctx.globalAlpha = 1.0;
+}
+
+function drawTwin() {
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const rect = twinCanvas.getBoundingClientRect();
+  const w = Math.round(rect.width) || 220;
+  const h = Math.round(rect.height) || 138;
+  if (twinCanvas.width !== w * dpr || twinCanvas.height !== h * dpr) {
+    twinCanvas.width = w * dpr;
+    twinCanvas.height = h * dpr;
+  }
+  tCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  tCtx.clearRect(0, 0, w, h);
+
+  const dark = document.documentElement.dataset.nicol === "crossed";
+  const ink = dark ? "#EAE6DF" : "#181818";
+  const accent = dark ? "#F09D80" : "#8F2519";
+  const jade = dark ? "#68E0C2" : "#0E5A50";
+  const indigo = dark ? "rgba(138,200,238,0.45)" : "rgba(31,68,99,0.36)";
+
+  const cx = w * 0.5;
+  const cy = h * 0.84;
+  const halfAngle = (42.275 * Math.PI) / 180;
+  const scale = h / 138;
+  const len = 88 * scale;
+  const wid = 18 * scale;
+  const aligned = allCrystallized ? 1 : alignmentProgress;
+
+  // Ephemeral single breathing ring on resonance
+  if (pulseRing > 0.03) {
+    tCtx.save();
+    tCtx.beginPath();
+    tCtx.arc(cx, cy - 34 * scale, (1 - pulseRing) * 68 * scale + 14, 0, Math.PI * 2);
+    tCtx.strokeStyle = jade;
+    tCtx.globalAlpha = pulseRing * 0.45;
+    tCtx.lineWidth = 0.9;
+    tCtx.stroke();
+    tCtx.restore();
+  }
+
+  // Left Wing
+  tCtx.save();
+  tCtx.translate(cx - cancelOffset * 2.2, cy);
+  tCtx.rotate(-halfAngle);
+  drawPrismHairline(tCtx, len, wid, ink, dark ? "rgba(234,230,223,0.03)" : "rgba(24,24,24,0.02)");
+  tCtx.restore();
+
+  // Right Wing Birefringent Ghost (converges smoothly to 0px as aligned -> 1!)
+  const splitPx = (1 - aligned) * 3.4;
+  if (splitPx > 0.25) {
+    tCtx.save();
+    tCtx.translate(cx + splitPx, cy - splitPx * 0.45);
+    tCtx.rotate(halfAngle);
+    drawPrismHairline(tCtx, len, wid, indigo, null);
+    tCtx.restore();
+  }
+
+  // Right Wing Primary
+  tCtx.save();
+  tCtx.translate(cx + cancelOffset * 2.2, cy - pulseRing * 2.5);
+  tCtx.rotate(halfAngle);
+  drawPrismHairline(
+    tCtx, len, wid,
+    aligned > 0.5 ? jade : accent,
+    aligned > 0.5
+      ? (dark ? "rgba(104,224,194,0.10)" : "rgba(14,90,80,0.06)")
+      : (dark ? "rgba(240,157,128,0.07)" : "rgba(143,37,25,0.04)")
+  );
+  tCtx.restore();
+
+  // Delicate 84°33' Copperplate Angle Arc in the V-Valley
+  const sub = dark ? "#A9A398" : "#545049";
+  tCtx.save();
+  tCtx.beginPath();
+  const arcR = 42 * scale;
+  tCtx.arc(cx, cy, arcR, -Math.PI / 2 - halfAngle, -Math.PI / 2 + halfAngle);
+  tCtx.strokeStyle = sub;
+  tCtx.globalAlpha = 0.52;
+  tCtx.lineWidth = 0.75;
+  tCtx.stroke();
+  tCtx.globalAlpha = 0.85;
+  tCtx.fillStyle = sub;
+  tCtx.font = `${Math.max(8, Math.round(9.5 * scale))}px ui-monospace, "SF Mono", Menlo, monospace`;
+  tCtx.textAlign = "center";
+  tCtx.fillText("84°33′", cx, cy - arcR - 5 * scale);
+  tCtx.restore();
+
+  // Central Twinning Suture (白い継ぎ目 84°33′)
+  tCtx.save();
+  tCtx.beginPath();
+  tCtx.moveTo(cx, cy + 5);
+  tCtx.lineTo(cx, cy - 34 * scale);
+  tCtx.strokeStyle = ink;
+  tCtx.setLineDash([2, 2.5]);
+  tCtx.lineWidth = 1.1;
+  tCtx.stroke();
+  tCtx.restore();
+}
+
+function stepTwinAnim() {
+  rafId = null;
+  if (reducedMotion) {
+    pulseRing = 0;
+    cancelOffset = 0;
+    drawTwin();
+    return;
+  }
+  pulseRing *= 0.88;
+  cancelOffset *= 0.86;
+  drawTwin();
+  if (pulseRing > 0.02 || cancelOffset > 0.02) {
+    rafId = requestAnimationFrame(stepTwinAnim);
+  }
+}
+
+function requestTwinFrame() {
+  if (reducedMotion) {
+    drawTwin();
+    return;
+  }
+  if (!rafId) rafId = requestAnimationFrame(stepTwinAnim);
+}
+
+function attachFrontispieceTwin() {
+  let didDrag = false;
+  const start = (y) => { dragY = y; didDrag = false; };
+  const move = (y) => {
+    if (dragY === null) return;
+    const dy = dragY - y;
+    if (dy > 20) {
+      dragY = y;
+      didDrag = true;
+      triggerRisingResonance("上向き圧電応力");
+    } else if (dy < -24) {
+      dragY = y;
+      didDrag = true;
+      triggerAntiPhase();
+    }
+  };
+  const end = () => { dragY = null; };
+
+  twinCanvas.addEventListener("mousedown", e => start(e.clientY));
+  window.addEventListener("mousemove", e => move(e.clientY));
+  window.addEventListener("mouseup", end);
+  twinCanvas.addEventListener("touchstart", e => { if (e.touches[0]) start(e.touches[0].clientY); }, { passive: true });
+  twinCanvas.addEventListener("touchmove", e => { if (e.touches[0]) move(e.touches[0].clientY); }, { passive: true });
+  twinCanvas.addEventListener("touchend", end);
+  twinCanvas.addEventListener("click", () => {
+    if (didDrag) { didDrag = false; return; }
+    triggerRisingResonance("双晶打鍵");
+  });
+  twinCanvas.addEventListener("keydown", (ev) => {
+    if (ev.key === "ArrowUp" || ev.key === " " || ev.key === "Enter") {
+      ev.preventDefault();
+      triggerRisingResonance("上げ核応力");
+    } else if (ev.key === "ArrowDown") {
+      ev.preventDefault();
+      triggerAntiPhase();
+    }
+  });
+  window.addEventListener("resize", () => drawTwin());
+}
+
+// ============================================================================
+// Minimal Toolbar Controls
+// ============================================================================
+document.getElementById("btn-mic").onclick = toggleMic;
+
+document.getElementById("btn-crystallize-all").onclick = function() {
+  allCrystallized = !allCrystallized;
+  document.body.classList.toggle("all-crystallized", allCrystallized);
+  this.setAttribute("aria-pressed", String(allCrystallized));
+  if (allCrystallized) {
+    pulseRing = 1.0;
+    playModalTone("twin_chord", "narada");
+    whisper(`全${totalNodes}箇所の複屈折語を単一焦点へ結びました`);
+  } else {
+    whisper("複屈折（二重像）位相へ戻しました");
+  }
+  requestTwinFrame();
+};
+
+document.getElementById("btn-writing-mode").onclick = function() {
+  const bodyEl = document.getElementById("manuscript-body");
+  const sheetEl = document.getElementById("page-sheet");
+  const isVert = bodyEl.classList.toggle("vertical-mode");
+  sheetEl.classList.toggle("is-vertical", isVert);
+  this.setAttribute("aria-pressed", String(isVert));
+  this.textContent = isVert ? "横" : "縦";
+  if (isVert) bodyEl.scrollLeft = 0;
+};
+
+document.getElementById("btn-nicol").onclick = function() {
+  const html = document.documentElement;
+  const isCrossed = html.dataset.nicol !== "crossed";
+  html.dataset.nicol = isCrossed ? "crossed" : "parallel";
+  this.setAttribute("aria-pressed", String(isCrossed));
+  this.textContent = isCrossed ? "明" : "暗";
+  drawTwin();
+};
+
+const modalEl = document.getElementById("statement-modal");
+function openColophon() {
+  lastTriggerFocus = document.activeElement;
+  modalEl.classList.add("open");
+  document.body.classList.add("colophon-open");
+  document.getElementById("btn-modal-close").focus();
+}
+function closeColophon() {
+  modalEl.classList.remove("open");
+  document.body.classList.remove("colophon-open");
+  if (lastTriggerFocus && lastTriggerFocus.focus) lastTriggerFocus.focus();
+}
+document.getElementById("btn-statement").onclick = openColophon;
+document.getElementById("btn-modal-close").onclick = closeColophon;
+
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && modalEl.classList.contains("open")) {
+    closeColophon();
+  }
+});
+
+renderManuscript();
+attachFrontispieceTwin();
+drawTwin();
+</script>
+</body>
+</html>
